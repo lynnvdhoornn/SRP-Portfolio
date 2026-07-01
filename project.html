@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project — Lynn van der Hoorn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #C7C3FF;
+      --dark: #19060C;
+      --accent: #C8B89A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #19060C;
+      color: #C7C3FF;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CURSOR ── */
+    .cursor {
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      transition: transform 0.1s;
+    }
+    .cursor-ring {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, transform 0.15s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring.hovering { width: 64px; height: 64px; }
+
+    /* ── NAV ── */
+    .proj-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.6rem 2.5rem;
+      border-bottom: 1px solid rgba(245,240,232,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #19060C;
+    }
+    .proj-nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: rgba(245,240,232,0.7);
+      text-decoration: none;
+    }
+    .proj-nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .proj-nav-links a {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.7);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .proj-nav-links a:hover { color: #C7C3FF; }
+
+    /* ── HEADER ── */
+    .proj-header {
+      padding: 5rem 2.5rem 3rem;
+      border-bottom: 1px solid rgba(245,240,232,0.1);
+    }
+    .proj-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.4);
+      margin-bottom: 1.2rem;
+    }
+    .proj-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3.5rem, 8vw, 9rem);
+      line-height: 0.9;
+      color: #C7C3FF;
+      margin-bottom: 4rem;
+    }
+    .proj-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .proj-desc-text p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(245,240,232,0.75);
+      margin-bottom: 1.2rem;
+    }
+    .proj-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem 3rem;
+    }
+    .proj-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .proj-meta-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.35);
+    }
+    .proj-meta-value {
+      font-size: 0.95rem;
+      color: #C7C3FF;
+      line-height: 1.5;
+    }
+
+    /* ── IMAGES ── */
+    .proj-images {
+      padding: 5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .proj-img-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .proj-img-3col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    .proj-img-4col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    .proj-img-placeholder {
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .proj-img-placeholder::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(25,6,12,0.06) 0px,
+        rgba(25,6,12,0.06) 1px,
+        transparent 1px,
+        transparent 24px
+      );
+    }
+    .proj-img-full .proj-img-placeholder {
+      width: 100%;
+    }
+    .proj-img-placeholder {
+      background: #19060C !important; /* no colored extensions visible */
+    }
+    .proj-img-placeholder img {
+      width: 100%;
+      height: auto;
+      display: block;
+      position: relative;
+      z-index: 1;
+      border-radius: 12px;
+    }
+    .proj-img-placeholder::after { display: none; }
+    .proj-video {
+      border-radius: 12px;
+      overflow: hidden;
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #0a0a0a;
+    }
+    .proj-media-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      height: auto !important;
+    }
+
+    /* ── NEXT PROJECT ── */
+    .proj-next {
+      border-top: 1px solid rgba(245,240,232,0.1);
+      padding: 6rem 2.5rem 8rem;
+      text-align: center;
+    }
+    .proj-next-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.35);
+      margin-bottom: 1.5rem;
+    }
+    .proj-next-link {
+      text-decoration: none;
+      display: inline-block;
+    }
+    .proj-next-title {
+      display: block;
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3rem, 8vw, 8rem);
+      font-style: italic;
+      color: #C7C3FF;
+      line-height: 1;
+      transition: opacity 0.25s;
+    }
+    .proj-next-link:hover .proj-next-title { opacity: 0.6; }
+
+    /* ── FOOTER (same as main) ── */
+    .site-footer { background: #19060C; }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 420px;
+      border-top: 1px solid rgba(245,240,232,0.1);
+    }
+    .footer-img-block {
+      display: flex;
+      align-items: stretch;
+      border-right: 1px solid rgba(245,240,232,0.1);
+    }
+    .footer-img-placeholder {
+      width: 100%;
+      background: rgba(245,240,232,0.03);
+      display: flex;
+      align-items: flex-end;
+      padding: 2.5rem;
+    }
+    .footer-img-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 7rem);
+      line-height: 0.9;
+      color: rgba(245,240,232,0.08);
+      letter-spacing: 0.04em;
+    }
+    .footer-form-block {
+      padding: 5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .footer-form-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 5.5vw, 6.5rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: #FD3B08;
+      margin-bottom: 3rem;
+    }
+    .footer-form { display: flex; flex-direction: column; gap: 0; }
+    .footer-field {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid rgba(245,240,232,0.2);
+      padding: 1rem 0;
+    }
+    .footer-field label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: rgba(245,240,232,0.6);
+      margin-bottom: 0.2rem;
+    }
+    .footer-field input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #C7C3FF;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      padding: 0.2rem 0;
+    }
+    .footer-field input::placeholder { color: rgba(245,240,232,0.25); }
+    .footer-submit {
+      margin-top: 2rem;
+      align-self: flex-start;
+      background: transparent;
+      border: 1px solid rgba(245,240,232,0.4);
+      color: #C7C3FF;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.8rem 2.5rem;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+    }
+    .footer-submit:hover { background: #C7C3FF; color: #19060C; }
+    .footer-mid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 2rem 4rem;
+      border-top: 1px solid rgba(245,240,232,0.1);
+    }
+    .footer-socials { display: flex; gap: 2.5rem; }
+    .footer-socials a {
+      font-size: 0.82rem;
+      color: rgba(245,240,232,0.7);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: #C7C3FF; }
+    .footer-logo-center { font-size: 1.8rem; color: #FD3B08; text-align: center; }
+    .footer-info { display: flex; gap: 3rem; justify-content: flex-end; }
+    .footer-info-col { display: flex; flex-direction: column; gap: 0.2rem; text-align: right; }
+    .footer-info-col span { font-size: 0.82rem; color: rgba(245,240,232,0.7); }
+    .footer-info-label {
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: rgba(245,240,232,0.4) !important;
+      font-size: 0.68rem !important;
+      text-transform: uppercase;
+    }
+    .footer-copy {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      border-top: 1px solid rgba(245,240,232,0.08);
+    }
+    .footer-copy span { font-size: 0.72rem; color: rgba(245,240,232,0.35); letter-spacing: 0.06em; }
+
+    /* Footer strips */
+    .footer-strips { overflow: hidden; }
+    .footer-strip-row { height: 48px; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+    .footer-strip-inner { display: inline-flex; flex-shrink: 0; height: 100%; }
+    .footer-strip-block { width: 48px; height: 100%; flex-shrink: 0; }
+    .footer-strip-left .footer-strip-inner  { animation: footerLeft  6s linear infinite; }
+    .footer-strip-right .footer-strip-inner { animation: footerRight 6s linear infinite; }
+    @keyframes footerLeft  { from { transform: translateX(0); }     to { transform: translateX(-96px); } }
+    @keyframes footerRight { from { transform: translateX(-96px); } to { transform: translateX(0); } }
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- NAV -->
+  <nav class="proj-nav">
+    <a href="index.html" class="proj-nav-logo">portfolio</a>
+    <ul class="proj-nav-links">
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main id="proj-content"></main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" id="contact">
+    <div class="footer-strips">
+      <div class="footer-strip-row footer-strip-left" id="fs1"></div>
+      <div class="footer-strip-row footer-strip-right" id="fs2"></div>
+    </div>
+    <div class="footer-top">
+      <div class="footer-img-block">
+        <div class="footer-img-placeholder">
+          <span class="footer-img-text">LYNN<br>VAN DER<br>HOORN</span>
+        </div>
+      </div>
+      <div class="footer-form-block">
+        <h2 class="footer-form-title">LET'S<br>WORK TOGETHER</h2>
+        <form class="footer-form" onsubmit="return false;">
+          <div class="footer-field"><label>Name</label><input type="text" /></div>
+          <div class="footer-field"><label>Email</label><input type="email" /></div>
+          <div class="footer-field"><label>Message</label><input type="text" /></div>
+          <button class="footer-submit" type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-mid">
+      <div class="footer-socials">
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Behance</a>
+      </div>
+      <div class="footer-logo-center">
+        <svg viewBox="0 0 200 200" width="68" height="68" xmlns="http://www.w3.org/2000/svg">
+          <g fill="#FD3B08">
+            <ellipse cx="100" cy="87" rx="11" ry="24"/>
+            <ellipse cx="111" cy="96" rx="11" ry="24" transform="rotate(72,111,96)"/>
+            <ellipse cx="107" cy="110" rx="11" ry="24" transform="rotate(144,107,110)"/>
+            <ellipse cx="93" cy="110" rx="11" ry="24" transform="rotate(216,93,110)"/>
+            <ellipse cx="89" cy="96" rx="11" ry="24" transform="rotate(288,89,96)"/>
+            <circle cx="100" cy="100" r="11"/>
+          </g>
+        </svg>
+      </div>
+      <div class="footer-info">
+        <div class="footer-info-col">
+          <span class="footer-info-label">Based in</span>
+          <span>Amsterdam, NL</span>
+        </div>
+        <div class="footer-info-col">
+          <span class="footer-info-label">Contact</span>
+          <span>lynnvanderhoorn@gmail.com</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copy">
+      <span>Lynn van der Hoorn ©</span>
+      <span>CMD · HvA · Amsterdam, NL</span>
+    </div>
+  </footer>
+
+  <script>
+    // ── PROJECT DATA ──
+    const projects = {
+      recrafted: {
+        title: 'Recrafted',
+        category: 'UX / UI',
+        color: '#FD3B08',
+        client: 'HvA — Minor Visual Interface Design',
+        year: '2025',
+        role: 'UX/UI Design',
+        deliverables: 'Adobe XD\nAdobe Photoshop',
+        desc1: 'Recrafted is a project where I built a website about furniture made from recycled materials. The idea is to turn old things into something new that looks great and is sustainable at the same time. The website had to radiate this sustainable message, while also showing how beautiful furniture from recycled materials can be.',
+        desc2: 'The challenge was to build a website that both communicates the message of sustainability clearly and is user-friendly. I had to make sure the story was told well, while keeping the website visually attractive and easy to navigate. It was a fun challenge to bring all of that together.',
+        next: 'paradiso',
+        nextTitle: 'Paradiso',
+        mediaHtml: `
+          <div class="proj-img-2col">
+            <div class="proj-img-placeholder" style="">
+              <img src="recrafted-chair.jpg" alt="Recrafted laptop on chair">
+            </div>
+            <div class="proj-img-placeholder" style="">
+              <img src="recrafted-mindmap.png" alt="Recrafted mindmap">
+            </div>
+          </div>
+          <div class="proj-img-2col">
+            <div class="proj-img-placeholder" style="">
+              <img src="recrafted-grids.png" alt="Recrafted page grids">
+            </div>
+            <div class="proj-img-placeholder" style="">
+              <img src="recrafted-styleguide.png" alt="Recrafted style guide">
+            </div>
+          </div>
+          <div class="proj-img-full">
+            <div class="proj-img-placeholder" style="">
+              <img src="recrafted-wireflow.jpg" alt="Recrafted wireflow">
+            </div>
+          </div>
+        `
+      },
+      paradiso: {
+        title: 'Paradiso',
+        category: 'Front-end',
+        color: '#B79D85',
+        client: 'HvA — Front-end Development',
+        year: '2023',
+        role: 'Front-end Development',
+        deliverables: 'HTML\nCSS\nJavaScript',
+        desc1: 'Paradiso is a well-known music venue in Amsterdam, known for its wide range of concerts and events. The website plays an important role, as it is for many visitors the very first point of contact with Paradiso.',
+        desc2: 'In this project I recreated 2 pages of the Paradiso website, with the goal of coding the site entirely myself in a semantically correct way. I focused on building the homepage and the news page — two important parts of the site. This project not only strengthened my skills, but also taught me to apply new techniques.',
+        next: 'fuera',
+        nextTitle: 'Fuera Dentro',
+        mediaHtml: `
+          <div class="proj-img-2col">
+            <div class="proj-img-placeholder">
+              <img src="paradiso-mockup.png" alt="Paradiso phone and laptop mockup">
+            </div>
+            <div class="proj-media-wrap" style="aspect-ratio: 16/10; overflow: hidden;">
+              <video class="proj-video" style="width:100%; height:100%; object-fit:cover;" autoplay muted loop playsinline>
+                <source src="semantisch.mov" type="video/mp4">
+              </video>
+            </div>
+          </div>
+          <div class="proj-media-wrap">
+            <video class="proj-video" autoplay muted loop playsinline>
+              <source src="responsive.mov" type="video/mp4">
+            </video>
+          </div>
+          <div class="proj-img-2col">
+            <div class="proj-img-placeholder">
+              <img src="parad-grid.png" alt="Paradiso events grid">
+            </div>
+            <div class="proj-img-placeholder">
+              <img src="parad-costumimg2.jpg" alt="Paradiso iPad on white shelf">
+            </div>
+          </div>
+        `
+      },
+      fuera: {
+        title: 'Fuera Dentro',
+        category: 'Graphic Design',
+        color: '#977802',
+        client: 'FueraDentro (Stage – Worck)',
+        year: '2024',
+        role: 'Graphic Design',
+        deliverables: 'Adobe Photoshop\nAdobe Illustrator',
+        desc1: 'FueraDentro is a Dutch design label for garden furniture, collaborating with renowned designers to create modern, luxury outdoor furniture. They make stylish pieces that appeal to the contemporary design enthusiast.',
+        desc2: 'The challenge in this project was to design a Christmas card that reflects the luxury and modern aesthetic of FueraDentro, while also radiating the warmth and coziness of the holidays. Finding the right balance between their high-end design language and the inviting atmosphere of Christmas was key.',
+        next: 'poster',
+        nextTitle: 'Poster Design',
+        mediaHtml: `
+          <div style="display:grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <div class="proj-media-wrap" style="height:100%;">
+              <video class="proj-video" style="height:100%; object-fit:cover;" autoplay muted loop playsinline>
+                <source src="snowglobe.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="proj-img-placeholder">
+              <img src="fuera-styleguide.png" alt="FueraDentro style guide">
+            </div>
+          </div>
+          <div class="proj-img-3col">
+            <div class="proj-img-placeholder">
+              <img src="fuera-redcard.jpg" alt="FueraDentro red card">
+            </div>
+            <div class="proj-img-placeholder">
+              <img src="fuera-creamcard.png" alt="FueraDentro cream card">
+            </div>
+            <div class="proj-img-placeholder">
+              <img src="fuera-handcards.png" alt="FueraDentro hand holding cards">
+            </div>
+          </div>
+          <div class="proj-img-full">
+            <div class="proj-img-placeholder" style="aspect-ratio: 26/10; overflow: hidden;">
+              <img src="fuera-gifts.jpg" alt="FueraDentro gift photo" style="width:100%; height:100%; object-fit:cover; object-position: center 80%; border-radius:12px;">
+            </div>
+          </div>
+        `
+      },
+      poster: {
+        title: 'Poster Design',
+        category: 'Graphic Design',
+        color: '#C7C3FF',
+        client: 'Personal',
+        year: '2021–2025',
+        role: 'Graphic Design',
+        deliverables: 'Adobe Photoshop\nAdobe Illustrator',
+        desc1: 'I enjoy making posters and graphic design, both for school and outside of it. Experimenting with colors, typography, and composition is what I find most interesting.',
+        desc2: '',
+        next: 'travel',
+        nextTitle: 'Travel Journey',
+        mediaHtml: `
+          <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 2rem;">
+            <div class="proj-img-placeholder" style="grid-column:1; grid-row:1/3; background:#C7C3FF;">
+              <img src="poster-dancer.jpg" alt="Opening Party dancer poster" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+            <div class="proj-img-placeholder" style="grid-column:2/4; grid-row:1; background:#C7C3FF;">
+              <img src="poster-wine.png" alt="Opening Party wine poster">
+            </div>
+            <div class="proj-img-placeholder" style="grid-column:4; grid-row:1; background:#f5c030;">
+              <img src="poster-floria-cover1.jpg" alt="Floria Journal cover – Japan">
+            </div>
+            <div class="proj-img-placeholder" style="grid-column:5; grid-row:1; background:#b8d0e8;">
+              <img src="poster-floria-cover2.jpg" alt="Floria Journal cover – Mississippi">
+            </div>
+            <div class="proj-img-placeholder" style="grid-column:2/4; grid-row:2; background:#fff;">
+              <img src="poster-floria-mag.jpg" alt="Floria Magazine spread">
+            </div>
+            <div class="proj-img-placeholder" style="grid-column:4; grid-row:2; background:#2a4a8a;">
+              <img src="poster-floria-cover3.jpg" alt="Floria Journal cover – New Zealand blue">
+            </div>
+            <div class="proj-img-placeholder" style="grid-column:5; grid-row:2; background:#8a9a6a;">
+              <img src="poster-floria-cover4.jpg" alt="Floria Journal cover – Canada">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: 2fr 1.5fr 1.5fr; gap: 2rem;">
+            <div class="proj-img-placeholder" style="background:#e8e0d0;">
+              <img src="poster-series.jpg" alt="A Series of Thoughts, Images & Sensations">
+            </div>
+            <div class="proj-img-placeholder" style="background:#f5e87a;">
+              <img src="poster-lesstime.jpg" alt="Less Time Questioning More Time Creating">
+            </div>
+            <div class="proj-img-placeholder" style="background:#4a7a5a;">
+              <img src="poster-lacoa.jpg" alt="Lacoa Sports tennis poster">
+            </div>
+          </div>
+          <div class="proj-img-4col">
+            <div class="proj-img-placeholder" style="aspect-ratio:2/3; overflow:hidden;">
+              <img src="poster-queer.jpg" alt="Queer film poster" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+            <div class="proj-img-placeholder" style="aspect-ratio:2/3; overflow:hidden;">
+              <img src="poster-poorthings.jpg" alt="Poor Things film poster" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+            <div class="proj-img-placeholder" style="aspect-ratio:2/3; overflow:hidden;">
+              <img src="poster-queensgambit.jpg" alt="The Queen's Gambit poster" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+            <div class="proj-img-placeholder" style="aspect-ratio:2/3; overflow:hidden;">
+              <img src="poster-bonesandall.jpg" alt="Bones and All poster" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem;">
+            <div class="proj-img-placeholder" style="background:#3a3a4a;">
+              <img src="poster-paristexas.jpg" alt="Paris, Texas poster">
+            </div>
+            <div class="proj-img-placeholder" style="aspect-ratio:2/3; overflow:hidden;">
+              <img src="poster-parasite.jpg" alt="Parasite film poster" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+            <div class="proj-img-placeholder" style="aspect-ratio:2/3; overflow:hidden;">
+              <img src="poster-lobster.jpg" alt="The Lobster poster" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr 2fr; gap: 2rem;">
+            <div class="proj-img-placeholder" style="background:#d4e8f0;">
+              <img src="poster-aura1.jpg" alt="Aura poster blue">
+            </div>
+            <div class="proj-img-placeholder" style="background:#1a2a1a;">
+              <img src="poster-aura2.jpg" alt="Aura poster green">
+            </div>
+            <div class="proj-img-placeholder" style="background:#0a0a1a;">
+              <img src="poster-idaho.jpg" alt="My Own Private Idaho poster">
+            </div>
+          </div>
+        `
+      },
+      travel: {
+        title: 'Travel Journey',
+        category: 'UX / UI',
+        color: '#FD3B08',
+        client: 'HvA – Interaction',
+        year: '2023–24',
+        role: 'UX/UI Design',
+        deliverables: 'Adobe XD\nAdobe Photoshop',
+        desc1: 'Travel Journey helps travelers capture and organize their experiences, so they never lose valuable memories. The app stores travel photos and stories in a digital travel diary with a map view, showing all the locations you\'ve visited.',
+        desc2: 'In this project it was important to design an app that is both practical and well-organized for users. I had to think carefully about functionality and what users find important in an app — which taught me a lot about creating a logical structure and applying UX principles.',
+        next: 'blender',
+        nextTitle: 'Blender',
+        mediaHtml: `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start;">
+            <div class="proj-img-placeholder">
+              <img src="tj-phones-v2.png" alt="Travel Journey phone mockup">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:2rem;">
+              <div class="proj-img-placeholder">
+                <img src="tj-userjourney.png" alt="Travel Journey user journey">
+              </div>
+              <div class="proj-img-placeholder">
+                <img src="tj-requirements.png" alt="Travel Journey requirements">
+              </div>
+            </div>
+          </div>
+          <div class="proj-img-full">
+            <div class="proj-img-placeholder">
+              <img src="tj-wireflow.jpg" alt="Travel Journey wireflow">
+            </div>
+          </div>
+          <div class="proj-img-full">
+            <div class="proj-img-placeholder">
+              <img src="tj-grid.jpg" alt="Travel Journey screens">
+            </div>
+          </div>
+        `
+      },
+      blender: {
+        title: 'Blender',
+        category: '3D Design',
+        color: '#C7C3FF',
+        client: 'HvA – 3D',
+        year: '2023–24',
+        role: '3D Design',
+        deliverables: 'Blender',
+        desc1: 'During my 3D design assignments I discovered how fun and educational it is to create a 3D world. One of my first tasks was building a well — the starting point for a larger scene, where I kept adding models like trees, bears, and a campfire, all using different techniques. I also designed a street scene with a strong focus on detail, trying to bring every model to life.',
+        desc2: 'Working with Blender was challenging at first, because there are so many tools and functions. But that\'s exactly why I learned so much from it. Figuring out how to create certain shapes, add textures, and work with light was a real learning process. Building a complete scene with multiple models and details was a challenge — and a genuinely fun one.',
+        next: 'recrafted',
+        nextTitle: 'Recrafted',
+        mediaHtml: `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+            <div class="proj-img-placeholder">
+              <img src="blender-well-orig.png" alt="Blender forest scene overview">
+            </div>
+            <div class="proj-img-placeholder" style="overflow:hidden;">
+              <img src="blender-bear.jpg" alt="Blender bear mirror edit" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+            </div>
+          </div>
+          <div class="proj-img-2col">
+            <div class="proj-img-placeholder" style="background:#1a1a1a;">
+              <img src="blender-texture.jpg" alt="Blender bar stools texture nodes">
+            </div>
+            <div class="proj-img-placeholder" style="background:#ddd;">
+              <img src="blender-wireframe.png" alt="Blender wireframe render">
+            </div>
+          </div>
+          <div class="proj-img-full">
+            <div class="proj-img-placeholder">
+              <img src="blender-street.jpg" alt="Blender street scene">
+            </div>
+          </div>
+          <div class="proj-img-3col">
+            <div class="proj-img-placeholder" style="aspect-ratio:4/3; overflow:hidden;">
+              <img src="blender-well2.png" alt="Blender well render" style="width:100%; height:100%; object-fit:contain; border-radius:12px;">
+            </div>
+            <div class="proj-img-placeholder" style="aspect-ratio:4/3; overflow:hidden; background:#d4392a;">
+              <img src="blender-house.png" alt="Blender red building" style="width:100%; height:100%; object-fit:contain; border-radius:12px;">
+            </div>
+            <div class="proj-img-placeholder" style="aspect-ratio:4/3; overflow:hidden; background:#1a1a2e;">
+              <img src="blender-monster.png" alt="Blender robot monster" style="width:100%; height:100%; object-fit:contain; border-radius:12px;">
+            </div>
+          </div>
+        `
+      }
+    };
+
+    // ── RENDER ──
+    const slug = new URLSearchParams(window.location.search).get('slug') || 'paradiso';
+    const p = projects[slug] || projects['paradiso'];
+
+    function placeholder(h, opacity = 1, light = false) {
+      const bg = light
+        ? `rgba(245,240,232,0.04)`
+        : p.color;
+      const op = light ? 1 : opacity;
+      return `<div class="proj-img-placeholder" style="background:${bg}; height:${h}px; opacity:${op};"></div>`;
+    }
+
+    document.getElementById('proj-content').innerHTML = `
+      <section class="proj-header">
+        <p class="proj-label">Project</p>
+        <h1 class="proj-title">${p.title}</h1>
+        <div class="proj-intro">
+          <div class="proj-desc-text">
+            <p>${p.desc1}</p>
+            <p>${p.desc2}</p>
+          </div>
+          <div class="proj-meta">
+            <div class="proj-meta-item">
+              <span class="proj-meta-label">Client</span>
+              <span class="proj-meta-value">${p.client}</span>
+            </div>
+            <div class="proj-meta-item">
+              <span class="proj-meta-label">Year</span>
+              <span class="proj-meta-value">${p.year}</span>
+            </div>
+            <div class="proj-meta-item">
+              <span class="proj-meta-label">Role</span>
+              <span class="proj-meta-value">${p.role}</span>
+            </div>
+            <div class="proj-meta-item">
+              <span class="proj-meta-label">Deliverables</span>
+              <span class="proj-meta-value">${p.deliverables.replace(/\n/g,'<br>')}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="proj-images">
+        ${p.mediaHtml || `
+          <div class="proj-img-2col">
+            ${placeholder(440)}
+            ${placeholder(440, 1, true)}
+          </div>
+          <div class="proj-img-full">
+            ${placeholder(520, 0.18, true)}
+          </div>
+          <div class="proj-img-2col">
+            ${placeholder(380, 0.55)}
+            ${placeholder(380, 0.85)}
+          </div>
+        `}
+      </section>
+
+      <section class="proj-next">
+        <span class="proj-next-label">Next Project</span>
+        <a href="project.html?slug=${p.next}" class="proj-next-link">
+          <span class="proj-next-title">${p.nextTitle}</span>
+        </a>
+      </section>
+    `;
+
+    document.title = `${p.title} — Lynn van der Hoorn`;
+
+    // ── FOOTER STRIPS ──
+    const colors1 = ['#19060C', '#C7C3FF', '#19060C', '#C7C3FF'];
+    const colors2 = ['#C7C3FF', '#19060C', '#C7C3FF', '#19060C'];
+    function buildStrip(id, colors) {
+      const el = document.getElementById(id);
+      const count = Math.ceil(window.innerWidth / 48) * 3 + 4;
+      let html = '<div class="footer-strip-inner">';
+      for (let i = 0; i < count; i++) {
+        html += `<div class="footer-strip-block" style="background:${colors[i % colors.length]}"></div>`;
+      }
+      html += '</div>';
+      el.innerHTML = html;
+    }
+    buildStrip('fs1', colors1);
+    buildStrip('fs2', colors2);
+
+    // ── CURSOR ──
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function animate() {
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
+      cur.style.left = mx + 'px';
+      cur.style.top = my + 'px';
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animate);
+    })();
+    document.querySelectorAll('a, button, [role="button"]').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+    });
+  </script>
+</body>
+</html>
